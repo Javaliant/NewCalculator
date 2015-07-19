@@ -1,5 +1,9 @@
 /* Author: Luigi Vincent
-*
+* TODO: 
+*  Add consideration for whether the decimal is already placed
+*  After the equals sign is clicked, do not append text, but start anew
+*  error checking for division by 0
+*  not too long decimals
 */
 
 import javafx.application.Application;
@@ -34,29 +38,51 @@ public class Calculator extends Application {
 
 		Button backButton = new Button("\u2190");
 		backButton.setMinSize(100, 100);
+		backButton.setOnAction(e -> {
+			String currentText = result.getText();
+			if (!currentText.isEmpty()){
+				result.setText(currentText.substring(0, currentText.length() - 1));
+			}
+		});
 		buttonLayout.add(backButton, 2, 0);
 
 		Button clearButton = new Button("Clear");
 		clearButton.setMinSize(200, 100);
+		clearButton.setOnAction(e -> {
+			result.clear();
+		});
 		GridPane.setColumnSpan(clearButton, 2);	
 		buttonLayout.add(clearButton, 0, 0);
 
 		Button[] numberButtons = new Button[10];
 		for (int i = 3, target = 1; i >= 1; i--) {
 			for (int j = 0; j <= 2; j++) {
-				numberButtons[target] = new Button(Integer.toString(target));
+				String str = Integer.toString(target);
+				numberButtons[target] = new Button(str);
 				numberButtons[target].setMinSize(100, 100);
+				numberButtons[target].setOnAction(e -> {
+					result.appendText(str);
+				});
 				buttonLayout.add(numberButtons[target++], j, i);
 			}	
 		}
 
 		numberButtons[0] = new Button("0");
 		numberButtons[0].setMinSize(200, 100);
+		numberButtons[0].setOnAction(e -> {
+			result.appendText("0");
+		});
 		GridPane.setColumnSpan(numberButtons[0], 2);
 		buttonLayout.add(numberButtons[0], 0, 4);
 
+
 		Button decimalButton = new Button(".");
 		decimalButton.setMinSize(100, 100);
+		decimalButton.setOnAction(e -> {
+			if (result.getText().indexOf('.') == -1) {
+				result.appendText(".");
+			}
+		});
 		buttonLayout.add(decimalButton, 2, 4);
 
 
@@ -64,8 +90,12 @@ public class Calculator extends Application {
 		Button[] operatorButtons = new Button[operators.length];
 
 		for (int i = 0; i < operators.length; i++) {
-			operatorButtons[i] = new Button(operators[i]);
+			String op = operators[i];
+			operatorButtons[i] = new Button(op);
 			operatorButtons[i].setMinSize(100, 100);
+			operatorButtons[i].setOnAction(e -> {
+				result.appendText(op);
+			});
 			operatorButtons[i].setStyle("-fx-color: orange");
 			buttonLayout.add(operatorButtons[i], 3, i);
 		}
