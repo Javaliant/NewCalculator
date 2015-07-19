@@ -3,6 +3,7 @@
 */
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -21,11 +22,14 @@ public class Calculator extends Application {
 
 		TextField result = new TextField();
 		result.setStyle("-fx-font-size: 40");
-		result.setMaxWidth(400);
+		result.setMaxWidth(415); // total width + margins of buttons
 		result.setEditable(false);
 		layout.setTop(result);
 		
 		GridPane buttonLayout = new GridPane();
+		buttonLayout.setPadding(new Insets(10, 0, 0, 0));
+        buttonLayout.setHgap(5);
+        buttonLayout.setVgap(5);
 		layout.setCenter(buttonLayout);
 
 		Button backButton = new Button("\u2190");
@@ -46,6 +50,15 @@ public class Calculator extends Application {
 			}	
 		}
 
+		numberButtons[0] = new Button("0");
+		numberButtons[0].setMinSize(200, 100);
+		GridPane.setColumnSpan(numberButtons[0], 2);
+		buttonLayout.add(numberButtons[0], 0, 4);
+
+		Button decimalButton = new Button(".");
+		decimalButton.setMinSize(100, 100);
+		buttonLayout.add(decimalButton, 2, 4);
+
 
 		String[] operators = {"\u00F7", "x", "-", "+", "="};
 		Button[] operatorButtons = new Button[operators.length];
@@ -58,6 +71,8 @@ public class Calculator extends Application {
 		}
 
 		stage.setScene(new Scene(layout));
+		stage.setResizable(false);
+		stage.sizeToScene();
 		stage.setTitle("Legato's Calculator");
 		stage.show();
 	}
