@@ -1,6 +1,6 @@
 /* Author: Luigi Vincent
 * TODO: 
-*  Currently none
+*  Add key bindings for number buttons, clear, and back
 */
 
 import javafx.application.Application;
