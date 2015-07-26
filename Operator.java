@@ -1,5 +1,5 @@
 /* Author: Luigi Vincent
-
+Operator enum for use with Calculator
 */
 
 import java.util.function.BinaryOperator;

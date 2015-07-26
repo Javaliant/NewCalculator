@@ -1,5 +1,5 @@
 /* Author: Luigi Vicnent
-
+Styling which allows two textfields of Calculator to seem as one
 */
 .text-field {
     -fx-text-box-border: transparent;
