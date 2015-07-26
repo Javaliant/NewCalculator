@@ -27,7 +27,7 @@ public class Calculator extends Application {
 		BorderPane layout = new BorderPane();
 
 		TextField auxiliary = new TextField();
-		auxiliary.setStyle("-fx-font-size: 10");
+		auxiliary.setStyle("-fx-font-size: 15; -fx-text-fill: gray");
 		auxiliary.setMaxWidth(415); // 415 = total width, including margins of buttons
 		auxiliary.setEditable(false);
 
@@ -81,6 +81,8 @@ public class Calculator extends Application {
 					} else {
 						result.appendText(number);
 					}
+
+					operatorSelected = false;
 				});
 				buttonLayout.add(numberButtons[target++], j, i);
 			}	
@@ -91,6 +93,7 @@ public class Calculator extends Application {
 		numberButtons[0].setOnAction(e -> {
 			if (!result.getText().isEmpty() && !resultDisplayed) {
 				result.appendText("0");
+				operatorSelected = false;
 			}
 		});
 		GridPane.setColumnSpan(numberButtons[0], 2);
@@ -123,6 +126,12 @@ public class Calculator extends Application {
 					currentOperator = op;
 					int end = auxiliary.getText().length();
 					auxiliary.replaceText(end - 1, end,  symbol);
+				} else {
+					auxiliary.setText(calculate(currentOperator, result, auxiliary) + " " + symbol);
+					result.clear();
+					currentOperator = op;
+					resultDisplayed = true;
+					operatorSelected = true;
 				}
 			});
 			buttonLayout.addColumn(3, button);
@@ -132,13 +141,17 @@ public class Calculator extends Application {
 		equalsButton.setStyle("-fx-color: orange");
 		equalsButton.setMinSize(100, 100);
 		equalsButton.setOnAction(e -> {
-			result.setText(
-				calculate(currentOperator ,result, auxiliary)
-			);
-			resultDisplayed = true;
-			auxiliary.clear();
+			if (!auxiliary.getText().isEmpty()) {
+				result.setText(
+					calculate(currentOperator, result, auxiliary)
+				);
+				resultDisplayed = true;
+				operatorSelected = false;
+				auxiliary.clear();
+			}
 		});
 		buttonLayout.addColumn(3, equalsButton);
+		equalsButton.setDefaultButton(true);
 
 		Scene scene = new Scene(layout);
 		scene.getStylesheets().add("Calculator.css");
@@ -151,7 +164,7 @@ public class Calculator extends Application {
 	}
 
 	private static String calculate(Operator op, TextField main, TextField auxiliary) {
-		double val1 = Double.parseDouble(auxiliary.getText().replaceAll("\\D", ""));
+		double val1 = Double.parseDouble(auxiliary.getText().replaceAll("[^\\.0-9]", ""));
 		double val2 = Double.parseDouble(main.getText());
 
 		if (val2 == 0 && op == Operator.DIVIDE) {
@@ -159,15 +172,20 @@ public class Calculator extends Application {
 		}
 
 		double result = op.compute(val1, val2);
-
-		return result == (int)result ? 
-			Integer.toString((int)result) : String.format("%.2f", result);	
+		return toCalculatorString(result);
 	}
 
 	private static String acquireValue(String val) {
 		double result = Double.parseDouble(val);
-
-		return result == (int)result ? 
-			Integer.toString((int)result) : String.format("%.2f", result);	
+		return toCalculatorString(result);
 	}
-} 
+
+	private static String removeDecimalTrailingZeroes(String s) {
+		return s.indexOf(".") < 0 ? s : s.replaceAll("0*$", "").replaceAll("\\.$", "");
+	}
+
+	private static String toCalculatorString(double input) {
+		return input == (int)input ? 
+			Integer.toString((int)input) : removeDecimalTrailingZeroes(String.format("%.6f", input));
+	}
+}

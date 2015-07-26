@@ -2,24 +2,25 @@
 
 */
 
-public enum Operator implements Equation {
+import java.util.function.BinaryOperator;
+
+public enum Operator {
 	DIVIDE("\u00F7", (x, y) -> x / y),
 	MULTIPLY("x", (x, y) -> x * y),
 	SUBTRACT("-", (x, y) -> x - y),
 	ADD("+", (x, y) -> x + y);
 
 	private final String symbol;
-	private final Equation equation;
+	private final BinaryOperator<Double> equation;
 	
 
-	Operator(String symbol, Equation equation) {
+	Operator(String symbol, BinaryOperator<Double> equation) {
 		this.symbol = symbol;
 		this.equation = equation;
 	}
 
-	@Override
 	public double compute(double alpha, double beta) {
-		return equation.compute(alpha, beta);
+		return equation.apply(alpha, beta);
 	}
 
 	@Override
